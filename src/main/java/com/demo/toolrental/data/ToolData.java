@@ -15,7 +15,7 @@ public class ToolData {
 	/**
 	 * Retrieve all available tools
 	 * 
-	 * @return a map of a tool key to the tool
+	 * @return a map of toolcodes to tools
 	 */
 	public static HashMap<String, Tool> getTools() {
 		HashMap<String, Tool> tools = new HashMap<String, Tool>();
