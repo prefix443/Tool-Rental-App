@@ -1,16 +1,16 @@
 package com.demo.toolrental.services;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.HashMap;
-
-import com.demo.toolrental.data.ToolData;
-import com.demo.toolrental.domain.Checkout;
-import com.demo.toolrental.domain.RentalAgreement;
-import com.demo.toolrental.domain.ToolType;
-import com.demo.toolrental.domain.Tool;
+import com.demo.toolrental.domain.*;
+import com.demo.toolrental.repository.CheckoutRepository;
+import com.demo.toolrental.repository.RentalAgreementRepository;
+import com.demo.toolrental.repository.ToolRepository;
 import com.demo.toolrental.util.DateUtil;
 import com.demo.toolrental.util.NumberUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 /**
  * Perform a tool checkout for a customer
@@ -18,13 +18,15 @@ import com.demo.toolrental.util.NumberUtil;
  * @author Andrew
  * @version 1.0
  */
+
+@Service
 public class CheckoutService {
 
-	private HashMap<String, Tool> tools;
+	@Autowired
+	private CheckoutRepository checkoutRepository;
 
-	public CheckoutService() {
-		this.tools = ToolData.getTools();
-	}
+	@Autowired
+	private RentalAgreementRepository rentalAgreementRepository;
 
 	/**
 	 * Performs the checkout of a rental tool
@@ -36,16 +38,17 @@ public class CheckoutService {
 	 *                                     checkout
 	 */
 	public RentalAgreement checkoutTool(Checkout checkout) throws IllegalArgumentException {
-		if (checkout.getRentalDayCount() < 1) {
+		if (checkout.getRentalDayCount().intValue() < 1) {
 			throw new IllegalArgumentException("Invalid rental days - rental day count must be greater than 0");
 		}
-		if (checkout.getDiscountPercent() < 0 || checkout.getDiscountPercent() > 100) {
+		if (checkout.getDiscountPercent().intValue() < 0 || checkout.getDiscountPercent().intValue() > 100) {
 			throw new IllegalArgumentException("Invalid discount percent - discount percent must be in range 0 to 100");
 		}
 
-		Tool tool = this.tools.get(checkout.getToolCode());
-		ToolType toolType = tool.getToolType();
-		LocalDate dueDate = checkout.getCheckoutDate().plusDays(checkout.getRentalDayCount());
+		checkoutRepository.save(checkout);
+		Tool tool =  checkout.getTool();
+		ToolType toolType = checkout.getTool().getToolType();
+		LocalDate dueDate = checkout.getCheckoutDate().plusDays(checkout.getRentalDayCount().intValue());
 
 		int daysCharged = 0;
 		LocalDate currentDate = checkout.getCheckoutDate();
@@ -60,7 +63,7 @@ public class CheckoutService {
 			}
 		}
 		
-		double discountFraction = checkout.getDiscountPercent() / 100.0;
+		double discountFraction = checkout.getDiscountPercent().doubleValue() / 100.0;
 		BigDecimal preDiscountCharge = NumberUtil
 				.roundTwoDecimals(daysCharged * tool.getToolType().getDailyCharge().doubleValue());
 		BigDecimal discountAmount = NumberUtil.roundTwoDecimals(discountFraction * preDiscountCharge.doubleValue());
@@ -68,18 +71,19 @@ public class CheckoutService {
 				.roundTwoDecimals(preDiscountCharge.doubleValue() - discountAmount.doubleValue());
 
 		RentalAgreement agreement = new RentalAgreement();
-		agreement.setToolCode(checkout.getToolCode());
+		agreement.setTool(tool);
 		agreement.setToolType(tool.getToolType());
 		agreement.setToolBrand(tool.getBrand());
 		agreement.setRentalDays(checkout.getRentalDayCount());
 		agreement.setCheckoutDate(checkout.getCheckoutDate());
 		agreement.setDueDate(dueDate);
 		agreement.setDailyRentalCharge(tool.getToolType().getDailyCharge());
-		agreement.setChargeDays(daysCharged);
+		agreement.setChargeDays(new BigDecimal(daysCharged));
 		agreement.setPreDiscountCharge(preDiscountCharge);
 		agreement.setDiscountPercent(checkout.getDiscountPercent());
 		agreement.setDiscountAmount(discountAmount);
 		agreement.setFinalCharge(finalCharge);
+		rentalAgreementRepository.save(agreement);
 		return agreement;
 	}
 

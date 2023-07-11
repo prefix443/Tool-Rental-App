@@ -1,12 +1,13 @@
 package com.demo.toolrental.domain;
 
+import com.demo.toolrental.util.DateUtil;
+import com.demo.toolrental.util.NumberUtil;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
-
-import com.demo.toolrental.util.DateUtil;
-import com.demo.toolrental.util.NumberUtil;
+import javax.persistence.*;
 
 /**
  * Representation of the rental agreement produced after customer performs a
@@ -14,27 +15,67 @@ import com.demo.toolrental.util.NumberUtil;
  * 
  * @author Andrew
  */
+
+@Entity
+@Table(name = "rental_agreements")
 public class RentalAgreement {
 
-	private String toolCode;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@ManyToOne
+	@JoinColumn(name = "tool_id")
+	private Tool tool;
+
+	@ManyToOne
+	@JoinColumn(name = "tool_type_id")
 	private ToolType toolType;
+
+	@Column(name = "tool_brand")
 	private String toolBrand;
-	private int rentalDays;
+
+	@Column(name = "rental_days")
+	private BigDecimal rentalDays;
+
+	@Column(name = "checkout_date")
 	private LocalDate checkoutDate;
+
+	@Column(name = "due_date")
 	private LocalDate dueDate;
+
+	@Column(name = "daily_rental_charge")
 	private BigDecimal dailyRentalCharge;
-	private int chargeDays;
+
+	@Column(name = "charge_days")
+	private BigDecimal chargeDays;
+
+	@Column(name = "pre_discount_charge")
 	private BigDecimal preDiscountCharge;
-	private int discountPercent;
+
+	@Column(name = "discount_percent")
+	private BigDecimal discountPercent;
+
+	@Column(name = "discount_amount")
 	private BigDecimal discountAmount;
+
+	@Column(name = "final_charge")
 	private BigDecimal finalCharge;
 
-	public String getToolCode() {
-		return toolCode;
+	public Long getId() {
+		return id;
 	}
 
-	public void setToolCode(String toolCode) {
-		this.toolCode = toolCode;
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Tool getTool() {
+		return tool;
+	}
+
+	public void setTool(Tool tool) {
+		this.tool = tool;
 	}
 
 	public ToolType getToolType() {
@@ -53,11 +94,11 @@ public class RentalAgreement {
 		this.toolBrand = toolBrand;
 	}
 
-	public int getRentalDays() {
+	public BigDecimal getRentalDays() {
 		return rentalDays;
 	}
 
-	public void setRentalDays(int rentalDays) {
+	public void setRentalDays(BigDecimal rentalDays) {
 		this.rentalDays = rentalDays;
 	}
 
@@ -85,11 +126,11 @@ public class RentalAgreement {
 		this.dailyRentalCharge = dailyRentalCharge;
 	}
 
-	public int getChargeDays() {
+	public BigDecimal getChargeDays() {
 		return chargeDays;
 	}
 
-	public void setChargeDays(int chargeDays) {
+	public void setChargeDays(BigDecimal chargeDays) {
 		this.chargeDays = chargeDays;
 	}
 
@@ -101,11 +142,11 @@ public class RentalAgreement {
 		this.preDiscountCharge = preDiscountCharge;
 	}
 
-	public int getDiscountPercent() {
+	public BigDecimal getDiscountPercent() {
 		return discountPercent;
 	}
 
-	public void setDiscountPercent(int discountPercent) {
+	public void setDiscountPercent(BigDecimal discountPercent) {
 		this.discountPercent = discountPercent;
 	}
 
@@ -128,8 +169,8 @@ public class RentalAgreement {
 	@Override
 	public String toString() {
 		LinkedHashMap<String, String> rentalMap = new LinkedHashMap<String, String>();
-		rentalMap.put("Tool code" , toolCode);
-		rentalMap.put("Tool type" , toolType.name());
+		rentalMap.put("Tool code" , tool.getToolCode());
+		rentalMap.put("Tool type" , toolType.getToolType());
 		rentalMap.put("Tool brand" , toolBrand);
 		rentalMap.put("Rental days" , String.valueOf(rentalDays));
 		rentalMap.put("Check out date" , DateUtil.formatDate(checkoutDate));

@@ -1,24 +1,37 @@
 package com.demo.toolrental.domain;
 
+import javax.persistence.*;
+
 /**
  * Tool used for rental
  * 
  * @author Andrew
  */
+
+@Entity
+@Table(name = "tools")
 public class Tool {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(name = "tool_code")
 	private String toolCode;
+
+	@ManyToOne
+	@JoinColumn(name = "tool_type_id")
 	private ToolType toolType;
+
+	@Column(name = "brand")
 	private String brand;
 
-	public Tool(String toolCode, ToolType toolType, String brand) {
-		this.toolCode = toolCode;
-		this.toolType = toolType;
-		this.brand = brand;
+	public Long getId() {
+		return id;
 	}
 
-	public static Tool from(String toolCode, ToolType toolType, String brand) {
-		return new Tool(toolCode, toolType, brand);
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getToolCode() {
