@@ -65,7 +65,7 @@ public class ToolRentalTests {
 		checkout.setTool(toolRepository.findByToolCode("JAKR"));
 		checkout.setRentalDayCount(new BigDecimal(5));
 
-		//Assert
+		//Assert and Act
 		assertThrows(IllegalArgumentException.class, () -> {
 			checkoutServiceSpy.checkoutTool(checkout);
 		});

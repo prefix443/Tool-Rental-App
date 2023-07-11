@@ -11,6 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Rest controller for tool rental
+ * 
+ * @author Andrew
+ */
+
 @RestController
 @RequestMapping("/api/toolrental")
 public class ToolRentalController {

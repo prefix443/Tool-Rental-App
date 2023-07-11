@@ -5,6 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/**
+ * Repository to manage tool data
+ * 
+ * @author Andrew
+ */
 
 public interface ToolRepository extends JpaRepository<Tool, Long> {
 

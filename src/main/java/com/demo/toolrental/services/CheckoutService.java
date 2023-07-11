@@ -37,6 +37,7 @@ public class CheckoutService {
 	 * @exception IllegalArgumentException Invalid discount percentage specified in
 	 *                                     checkout
 	 */
+	
 	public RentalAgreement checkoutTool(Checkout checkout) throws IllegalArgumentException {
 		if (checkout.getRentalDayCount().intValue() < 1) {
 			throw new IllegalArgumentException("Invalid rental days - rental day count must be greater than 0");

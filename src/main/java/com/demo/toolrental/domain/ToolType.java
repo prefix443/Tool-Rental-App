@@ -3,7 +3,6 @@ package com.demo.toolrental.domain;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
-
 /**
  * Tool types used for rental
  *
@@ -72,4 +71,5 @@ public class ToolType {
 	public void setHolidayCharge(boolean holidayCharge) {
 		this.holidayCharge = holidayCharge;
 	}
+
 }
